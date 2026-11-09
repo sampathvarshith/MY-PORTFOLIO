@@ -28,8 +28,8 @@ export const contact = {
   youtubeHandle: "@Best1Creations",
   whatsappDisplay: "+91 6300543772",
   whatsapp: "https://wa.me/916300543772",
-  /** Publishing the WhatsApp number requires the owner's approval. Set to true once approved. */
-  showWhatsApp: false,
+  /** Owner approved publishing the WhatsApp number. */
+  showWhatsApp: true,
 } as const;
 
 export const mailto = (subject?: string, body?: string) => {
@@ -63,11 +63,11 @@ export const tools: { name: string; confirmed: boolean }[] = [
   { name: "Adobe Photoshop", confirmed: true },
   { name: "Canva", confirmed: true },
   { name: "AI creative tools", confirmed: true },
-  { name: "Adobe Premiere Pro", confirmed: false },
-  { name: "DaVinci Resolve", confirmed: false },
-  { name: "CapCut", confirmed: false },
-  { name: "Kdenlive", confirmed: false },
-  { name: "Figma", confirmed: false },
+  { name: "Adobe Premiere Pro", confirmed: true },
+  { name: "DaVinci Resolve", confirmed: true },
+  { name: "CapCut", confirmed: true },
+  { name: "Kdenlive", confirmed: true },
+  { name: "Figma", confirmed: true },
 ];
 
 /**

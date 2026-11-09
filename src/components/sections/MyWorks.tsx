@@ -53,7 +53,7 @@ export function MyWorks({ collage }: { collage: ResolvedImage[] }) {
                       ][i]
                     }`}
                   >
-                    <Artwork image={img} sizes="240px" label="Portfolio artwork" />
+                    <Artwork image={img} sizes="240px" label="Portfolio artwork" compact />
                   </div>
                 ))}
                 <ArrowUpRight className="absolute bottom-2 right-2 h-8 w-8 text-violet/60" />
