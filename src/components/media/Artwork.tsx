@@ -13,13 +13,15 @@ type Props = {
   layout?: "intrinsic" | "fill";
   /** Short label shown on the placeholder, e.g. "Terachapa — Poster 01". */
   label?: string;
+  /** Minimal placeholder for thumbnails. */
+  compact?: boolean;
 };
 
 /**
  * Renders artwork without cropping. When the file hasn't been supplied yet, renders a clearly
  * labelled placeholder that names the exact file to add.
  */
-export function Artwork({ image, sizes, priority, className = "", imgClassName = "", layout = "intrinsic", label }: Props) {
+export function Artwork({ image, sizes, priority, className = "", imgClassName = "", layout = "intrinsic", label, compact }: Props) {
   const ratio = `${image.width} / ${image.height}`;
   const boxStyle = layout === "intrinsic" ? { aspectRatio: ratio } : undefined;
   const box = `relative overflow-hidden ${layout === "fill" ? "h-full w-full" : "w-full"} ${className}`;
@@ -27,7 +29,7 @@ export function Artwork({ image, sizes, priority, className = "", imgClassName =
   if (!image.available) {
     return (
       <div className={box} style={boxStyle} role="img" aria-label={`Placeholder: ${image.alt}`}>
-        <ArtworkPlaceholder label={label ?? image.caption ?? "Artwork"} expected={image.expected} />
+        <ArtworkPlaceholder label={label ?? image.caption ?? "Artwork"} expected={image.expected} compact={compact} />
       </div>
     );
   }
@@ -46,7 +48,15 @@ export function Artwork({ image, sizes, priority, className = "", imgClassName =
   );
 }
 
-export function ArtworkPlaceholder({ label, expected }: { label: string; expected?: string }) {
+export function ArtworkPlaceholder({ label, expected, compact }: { label: string; expected?: string; compact?: boolean }) {
+  if (compact) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-[radial-gradient(80%_60%_at_50%_30%,#2a1150_0%,#0a0614_100%)]">
+        <VTMonogram className="h-8 w-8 opacity-70" />
+        <span className="text-[0.55rem] font-semibold uppercase tracking-[0.15em] text-violet-soft">Placeholder</span>
+      </div>
+    );
+  }
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-hidden bg-[radial-gradient(80%_60%_at_50%_30%,#2a1150_0%,#120a22_55%,#0a0614_100%)] p-5 text-center">
       <div
