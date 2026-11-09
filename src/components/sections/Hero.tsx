@@ -44,7 +44,7 @@ export function Hero({ featured }: { featured?: ResolvedProject }) {
           </div>
         </div>
 
-        <div className="order-1 mx-auto w-full max-w-[22rem] sm:max-w-md lg:order-2 lg:max-w-none">
+        <div className="order-1 mx-auto w-full max-w-[15rem] sm:max-w-sm lg:order-2 lg:max-w-none">
           <HeroVisual />
         </div>
       </div>
@@ -58,7 +58,7 @@ export function Hero({ featured }: { featured?: ResolvedProject }) {
               className="edge-glow panel group flex items-center gap-5 overflow-hidden rounded-3xl p-4 sm:p-5"
             >
               <div className="w-20 shrink-0 overflow-hidden rounded-xl sm:w-24">
-                <Artwork image={featured.cover} sizes="96px" label={featured.title} />
+                <Artwork image={featured.cover} sizes="96px" label={featured.title} compact />
               </div>
               <div className="min-w-0">
                 <p className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-violet-soft">Featured case study</p>

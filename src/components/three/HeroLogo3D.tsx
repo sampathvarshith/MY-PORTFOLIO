@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Lightformer, Sparkles } from "@react-three/drei";
+import { Environment, Lightformer, PerformanceMonitor, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
 import { T_BAR, T_STEM, V_SHAPE, type Pt } from "@/components/brand/monogram-paths";
 
@@ -49,7 +49,7 @@ function Monogram({ animate, pointer }: { animate: boolean; pointer: React.RefOb
     const chrome = new THREE.MeshPhysicalMaterial({
       color: "#eceef3",
       metalness: 1,
-      roughness: 0.16,
+      roughness: 0.24,
       clearcoat: 1,
       clearcoatRoughness: 0.08,
       envMapIntensity: 1.25,
@@ -109,6 +109,9 @@ export default function HeroLogo3D({
   onReady: () => void;
 }) {
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
+  // Weak GPUs that can't hold the frame rate drop to a still pose at 1x DPR.
+  const [degraded, setDegraded] = useState(false);
+  const moving = animate && !degraded;
 
   useEffect(() => {
     if (!animate) return;
@@ -124,8 +127,8 @@ export default function HeroLogo3D({
 
   return (
     <Canvas
-      frameloop={active && animate ? "always" : "demand"}
-      dpr={lite ? [1, 1.25] : [1, 1.75]}
+      frameloop={active && moving ? "always" : "demand"}
+      dpr={degraded ? 1 : lite ? [1, 1.25] : [1, 1.75]}
       camera={{ position: [0, 0, 6.4], fov: 34 }}
       gl={{ antialias: !lite, alpha: true, powerPreference: lite ? "low-power" : "high-performance" }}
       onCreated={({ gl }) => {
@@ -148,10 +151,14 @@ export default function HeroLogo3D({
         <Lightformer form="ring" intensity={4} position={[-4, 0.5, 1]} scale={2.4} color="#a855f7" />
         <Lightformer form="ring" intensity={3} position={[4, -0.5, 1]} scale={2} color="#7c3aed" />
         <Lightformer form="rect" intensity={1} position={[0, 0, -5]} scale={[12, 6, 1]} color="#2a1150" />
+        {/* Soft key panels in front of the mark so the flat chrome faces catch light. */}
+        <Lightformer form="rect" intensity={1.6} position={[1.5, 1, 7]} scale={[6, 3, 1]} color="#f1ecff" />
+        <Lightformer form="rect" intensity={0.8} position={[-2.5, -1.5, 6]} scale={[5, 2, 1]} color="#b48cff" />
       </Environment>
 
-      <Monogram animate={animate} pointer={pointer} />
-      {animate ? (
+      <PerformanceMonitor flipflops={2} onDecline={() => setDegraded(true)} onFallback={() => setDegraded(true)} />
+      <Monogram animate={moving} pointer={pointer} />
+      {moving ? (
         <Sparkles count={lite ? 24 : 60} scale={[6, 4.5, 3]} size={lite ? 1.6 : 2.2} speed={0.25} opacity={0.7} color="#c4a1ff" />
       ) : null}
     </Canvas>
