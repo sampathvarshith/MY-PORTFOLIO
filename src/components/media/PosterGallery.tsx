@@ -14,7 +14,10 @@ export function PosterGallery({ images, title }: { images: ResolvedImage[]; titl
   const triggerRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [index, setIndex] = useState<number | null>(null);
 
+  const lastIndex = useRef(0);
+
   const open = (i: number) => {
+    lastIndex.current = i;
     setIndex(i);
     dialogRef.current?.showModal();
   };
@@ -25,10 +28,9 @@ export function PosterGallery({ images, title }: { images: ResolvedImage[]; titl
     const dialog = dialogRef.current;
     if (!dialog) return;
     const onClose = () => {
-      setIndex((i) => {
-        if (i !== null) triggerRefs.current[i]?.focus();
-        return null;
-      });
+      const opener = triggerRefs.current[lastIndex.current];
+      setIndex(null);
+      requestAnimationFrame(() => opener?.focus());
     };
     dialog.addEventListener("close", onClose);
     return () => dialog.removeEventListener("close", onClose);

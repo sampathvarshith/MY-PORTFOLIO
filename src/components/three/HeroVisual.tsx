@@ -7,11 +7,21 @@ import { VTMonogram } from "@/components/brand/VTMonogram";
 const HeroLogo3D = dynamic(() => import("./HeroLogo3D"), { ssr: false });
 
 let webglSupport: boolean | null = null;
+/** Hardware-accelerated WebGL only; software renderers get the static SVG instead. */
 function detectWebGL() {
   if (webglSupport !== null) return webglSupport;
   try {
     const c = document.createElement("canvas");
-    webglSupport = !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const opts = { failIfMajorPerformanceCaveat: true };
+    const gl = (c.getContext("webgl2", opts) || c.getContext("webgl", opts)) as WebGLRenderingContext | null;
+    if (!gl) {
+      webglSupport = false;
+    } else {
+      const info = gl.getExtension("WEBGL_debug_renderer_info");
+      const renderer = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
+      webglSupport = !/swiftshader|llvmpipe|software|basic render/i.test(renderer);
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+    }
   } catch {
     webglSupport = false;
   }
